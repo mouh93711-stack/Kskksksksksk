@@ -1,25 +1,38 @@
-app = "ksksksksksk-xqva7a"
+# fly.toml app configuration file generated for kskksksksksk-xqva7a on 2026-10-05T21:32:09Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-primary_region = "ams"
+app = 'kskksksksksk-xqva7a'
+primary_region = 'ams'
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = 'Dockerfile'
 
 [env]
-  PYTHONUNBUFFERED = "1"
-  SESSION_NAME = "/app/data/my_personal_account"
-  IMAGE_SOURCE = "pixabay"
-  DOWNLOAD_DIR = "/app/profile_uploads"
-  DELAY_BETWEEN_UPLOADS = "5.0"
+  DELAY_BETWEEN_UPLOADS = '5.0'
+  DOWNLOAD_DIR = '/app/profile_uploads'
+  IMAGE_SOURCE = 'pixabay'
+  PYTHONUNBUFFERED = '1'
+  SESSION_NAME = '/app/data/my_personal_account'
 
 [processes]
-  app = "python main.py"
-
-[[vm]]
-  memory = "1gb"
-  cpu_kind = "shared"
-  cpus = 1
+  app = 'python main.py'
 
 [[mounts]]
-  source = "telegram_data"
-  destination = "/app/data"
+  source = 'telegram_data'
+  destination = '/app/data'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 256
