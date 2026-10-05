@@ -1,4 +1,5 @@
-app = "kskksksksksk-xqva7a"
+app = "ksksksksksk-xqva7a"
+
 primary_region = "ams"
 
 [build]
@@ -6,7 +7,7 @@ primary_region = "ams"
 
 [env]
   PYTHONUNBUFFERED = "1"
-  SESSION_NAME = "my_personal_account"
+  SESSION_NAME = "/app/data/my_personal_account"
   IMAGE_SOURCE = "pixabay"
   DOWNLOAD_DIR = "/app/profile_uploads"
   DELAY_BETWEEN_UPLOADS = "5.0"
@@ -15,7 +16,7 @@ primary_region = "ams"
   app = "python main.py"
 
 [[vm]]
-  memory = "256mb"
+  memory = "1gb"
   cpu_kind = "shared"
   cpus = 1
 
