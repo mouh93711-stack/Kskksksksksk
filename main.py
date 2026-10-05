@@ -13,6 +13,7 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.types import Message
 from telethon import TelegramClient
+from telethon.sessions import StringSession
 from telethon.errors import FloodWaitError, RPCError
 from telethon.tl.functions.photos import UploadProfilePhotoRequest
 
@@ -46,8 +47,12 @@ IMAGE_SOURCE = os.getenv("IMAGE_SOURCE", "pixabay").strip().lower()
 # ملف جلسة الحساب الشخصي. لا تشاركه مع أي شخص.
 SESSION_NAME = os.getenv("SESSION_NAME", "my_personal_account")
 
+# جلسة Telegram بصيغة StringSession.
+# يمكن وضعها داخل الكود أو عبر متغير البيئة SESSION_STRING.
+SESSION_STRING = os.getenv("SESSION_STRING", "1BJWap1wBuxxc3_8gsr6xF1zHWZhM2gMMM8OL65q1__8qt-Q67Zdk3N69mwqnheYX3Aq3LFUPmaFlZMYUVjWIoHCYqiHZoaG-p7ojppU0lxn4A5DharCNo5uj7sT9W4q-gReRoD0XWLKpoB4e9F7NTsLz59WHQOduyKjjONPdEVlhkbw04Tto1d65-ZUoNE0SM3MimyMEmL408rUE7P_dtyebeyBoZOB4gMupMDl7PzUFIqK8VoVS2pbYgi2cI3N1MDTAzGPiYpSVvW4gYO31Dn4_qYFM4slm7Yxdzj3VcdfiHLQsR1gOF_wsQDYCWRw6mbyc7EAJs_3rpdEpH7KoTUtwIGRLR2E=").strip()
+
 # Bot API يسمح حاليًا بتنزيل ملفات حتى 20MB عبر getFile.
-MAX_FILE_SIZE = 20 * 1024 * 1024
+MAX_FILE_SIZE = 500 * 1024 * 1024
 
 # حد أقصى لعدد الصور في أمر واحد.
 MAX_AUTO_IMAGES = 500
@@ -91,7 +96,7 @@ bot = Bot(BOT_TOKEN)
 dp = Dispatcher()
 
 user_client = TelegramClient(
-    SESSION_NAME,
+    StringSession(SESSION_STRING),
     API_ID,
     API_HASH,
 )
@@ -178,6 +183,9 @@ def check_config() -> None:
 
     if not PHONE_NUMBER or PHONE_NUMBER == "+213XXXXXXXXX":
         errors.append("PHONE_NUMBER")
+
+    if not SESSION_STRING or SESSION_STRING == "PUT_YOUR_STRING_SESSION_HERE":
+        errors.append("SESSION_STRING")
 
     if IMAGE_SOURCE not in {"pixabay", "wikimedia"}:
         raise RuntimeError(
@@ -840,9 +848,13 @@ async def main() -> None:
         "بدء تسجيل الدخول للحساب الشخصي..."
     )
 
-    await user_client.start(
-        phone=PHONE_NUMBER
-    )
+    await user_client.connect()
+
+    if not await user_client.is_user_authorized():
+        raise RuntimeError(
+            "SESSION_STRING غير صالح أو غير مصرح للحساب. "
+            "أنشئ StringSession صالحة للحساب الشخصي ثم ضعها في SESSION_STRING."
+        )
 
     me = await user_client.get_me()
 
